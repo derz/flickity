@@ -1,6 +1,8 @@
-# Flickity
+# Flickity Pure
 
 _Touch, responsive, flickable carousels_
+
+A flickity fork that doesn't mess with your DOM.
 
 See [flickity.metafizzy.co](http://flickity.metafizzy.co) for complete docs and demos.
 

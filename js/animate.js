@@ -62,19 +62,34 @@ proto.startAnimation = function() {
 
 proto.animate = function() {
   this.applyDragForce();
-  this.applySelectedAttraction();
 
-  var previousX = this.x;
+  var times = 1;
+  var t = new Date().getTime();
+  if (this.lastTime && !this.isPointerDown) {
+    times = (t - this.lastTime) / 16;
+  }
+  this.lastTime = t;
 
-  this.integratePhysics();
+  do {
+    this.applySelectedAttraction();
+
+    var previousX = this.x;
+
+    this.integratePhysics();
+    this.settle( previousX );
+  }
+  while (--times >= 1 && this.isAnimating);
+
   this.positionSlider();
-  this.settle( previousX );
+
   // animate next frame
   if ( this.isAnimating ) {
     var _this = this;
     requestAnimationFrame( function animateFrame() {
       _this.animate();
     });
+  } else {
+    this.lastTime = false;
   }
 };
 
@@ -177,8 +192,9 @@ proto._unshiftCells = function( cells ) {
 // -------------------------- physics -------------------------- //
 
 proto.integratePhysics = function() {
+  var f = this.getFrictionFactor();
   this.x += this.velocity;
-  this.velocity *= this.getFrictionFactor();
+  this.velocity *= f;
 };
 
 proto.applyForce = function( force ) {
