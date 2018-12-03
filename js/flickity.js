@@ -130,12 +130,10 @@ proto._create = function() {
   this.x = 0;
   this.velocity = 0;
   this.originSide = this.options.rightToLeft ? 'right' : 'left';
+
   // create viewport & slider
-  this.viewport = this.options.viewport instanceof HTMLElement ? this.options.viewport : this.element.querySelector(this.options.viewport || '.flickity-viewport');
-  this.slider = this.options.slider instanceof HTMLElement ? this.options.slider : this.element.querySelector(this.options.slider || '.flickity-slider');
-  this.slider.style[ this.originSide ] = 0;
-  this.viewport.classList.add('flickity-viewport');
-  this.slider.classList.add('flickity-slider');
+  this._createViewport();
+  this._createSlider();
 
   if ( this.options.resize || this.options.watchCSS ) {
     window.addEventListener( 'resize', this );
@@ -178,16 +176,14 @@ proto.activate = function() {
   }
 
   this.getSize();
-  // move initial cell elements so they can be loaded as cells
-  if (cellElems)
-  if (this.slider.parentNode !== this.viewport) {
-    throw new Error('flickity-slider is supposed to be a child of flickity-viewport');
+  // only move elements if we haven't defined our own viewport
+  if (!this.options.viewport && !this.options.slider) {
+    // move initial cell elements so they can be loaded as cells
+    var cellElems = this._filterFindCellElements( this.element.children );
+    moveElements( cellElems, this.slider );
+    this.viewport.appendChild( this.slider );
+    this.element.appendChild( this.viewport );
   }
-  if (this.viewport.parentNode !== this.element) {
-    throw new Error('flickity-viewport is supposed to be a child of flickity root');
-  }
-  var cellElems = this._filterFindCellElements( this.slider );
-
   // get cells from children
   this.reloadCells();
 
@@ -217,6 +213,18 @@ proto.activate = function() {
   this.dispatchEvent('ready');
 };
 
+Flickity.prototype._createViewport = function() {
+  this.viewport = this.options.viewport || document.createElement('div');
+  this.viewport.classList.add('flickity-viewport');
+};
+
+// slider positions the cells
+Flickity.prototype._createSlider = function() {
+  var slider = this.options.slider || document.createElement('div');
+  slider.classList.add('flickity-slider');
+  slider.style[ this.originSide ] = 0;
+  this.slider = slider;
+};
 
 proto._filterFindCellElements = function( elems ) {
   return utils.filterFindElements( elems, this.options.cellSelector );
@@ -849,9 +857,12 @@ proto.deactivate = function() {
   this.cells.forEach( function( cell ) {
     cell.destroy();
   });
-  this.element.removeChild( this.viewport );
-  // move child elements back into element
-  moveElements( this.slider.children, this.element );
+  this.unselectSelectedSlide();
+  if (!this.options.viewport && !this.options.slider) {
+    this.element.removeChild( this.viewport );
+    // move child elements back into element
+    moveElements( this.slider.children, this.element );
+  }
   if ( this.options.accessibility ) {
     this.element.removeAttribute('tabIndex');
     this.element.removeEventListener( 'keydown', this );
