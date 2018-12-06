@@ -1195,7 +1195,8 @@ return proto;
     );
   }
 
-}( window, function factory( window, EvEmitter, getSize,
+}( typeof window !== 'undefined' ? window : this, 
+  function factory( window, EvEmitter, getSize,
   utils, Cell, Slide, animatePrototype ) {
 
 
