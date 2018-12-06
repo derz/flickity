@@ -1,6 +1,6 @@
 {
   "name": "flickity",
-  "version": "2.1.2",
+  "version": "2.1.4",
   "description": "Touch, responsive, flickable carousels",
   "main": "js/index.js",
   "style": "css/flickity.css",
@@ -13,19 +13,19 @@
     "unidragger": "^2.3.0"
   },
   "devDependencies": {
-    "flickity-imagesloaded": "^2.0.0",
-    "flickity-as-nav-for": "^2.0.0",
-    "jquery-bridget": "^2.0.0",
-    "gulp": "^3.8.10",
-    "gulp-jshint": "^1.9.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-util": "^3.0.2",
     "chalk": "^0.5.1",
+    "flickity-as-nav-for": "^2.0.0",
+    "flickity-imagesloaded": "^2.0.0",
+    "gulp": "^3.8.10",
+    "gulp-clean-css": "^2.0.4",
+    "gulp-jshint": "^1.9.0",
+    "gulp-json-lint": "0.0.1",
+    "gulp-rename": "^1.2.0",
     "gulp-replace": "^0.5.1",
     "gulp-requirejs-optimize": "github:metafizzy/gulp-requirejs-optimize",
     "gulp-uglify": "^1.0.2",
-    "gulp-json-lint": "0.0.1",
-    "gulp-clean-css": "^2.0.4",
+    "gulp-util": "^3.0.2",
+    "jquery-bridget": "^2.0.0",
     "minimist": "^1.1.0"
   },
   "scripts": {
