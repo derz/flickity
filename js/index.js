@@ -21,7 +21,7 @@
       './page-dots',
       './player',
       './add-remove-cell',
-      './lazyload'
+      // './lazyload'
     ], factory );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
@@ -32,11 +32,11 @@
       require('./page-dots'),
       require('./player'),
       require('./add-remove-cell'),
-      require('./lazyload')
+      // require('./lazyload')
     );
   }
 
-})( window, function factory( Flickity ) {
+})( typeof window !== 'undefined' ? window : this, function factory( Flickity ) {
   /*jshint strict: false*/
   return Flickity;
 });
