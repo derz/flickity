@@ -20,8 +20,7 @@
       './prev-next-button',
       './page-dots',
       './player',
-      './add-remove-cell',
-      // './lazyload'
+      './add-remove-cell'
     ], factory );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
@@ -31,8 +30,7 @@
       require('./prev-next-button'),
       require('./page-dots'),
       require('./player'),
-      require('./add-remove-cell'),
-      // require('./lazyload')
+      require('./add-remove-cell')
     );
   }
 
