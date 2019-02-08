@@ -1,6 +1,6 @@
 {
   "name": "flickity",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "Touch, responsive, flickable carousels",
   "main": "js/index.js",
   "style": "css/flickity.css",
@@ -9,24 +9,26 @@
     "ev-emitter": "^1.0.2",
     "fizzy-ui-utils": "^2.0.0",
     "get-size": "^2.0.0",
-    "tap-listener": "^2.0.0",
-    "unidragger": "^2.3.0"
+    "unidragger": "^2.3.0",
+    "unipointer": "^2.3.0"
   },
   "devDependencies": {
-    "chalk": "^0.5.1",
+    "chalk": "^2.4.2",
     "flickity-as-nav-for": "^2.0.0",
     "flickity-imagesloaded": "^2.0.0",
-    "gulp": "^3.8.10",
-    "gulp-clean-css": "^2.0.4",
-    "gulp-jshint": "^1.9.0",
-    "gulp-json-lint": "0.0.1",
-    "gulp-rename": "^1.2.0",
-    "gulp-replace": "^0.5.1",
+    "gulp": "^4.0.0",
+    "gulp-clean-css": "^2.3.2",
+    "gulp-jshint": "^2.1.0",
+    "gulp-json-lint": "^0.1.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-replace": "^1.0.0",
     "gulp-requirejs-optimize": "github:metafizzy/gulp-requirejs-optimize",
-    "gulp-uglify": "^1.0.2",
-    "gulp-util": "^3.0.2",
+    "gulp-uglify": "^3.0.1",
+    "gulp-util": "^3.0.8",
     "jquery-bridget": "^2.0.0",
-    "minimist": "^1.1.0"
+    "jshint": "^2.9.7",
+    "merge2": "^1.2.3",
+    "minimist": "^1.2.0"
   },
   "scripts": {
     "test": "echo \"View test/ in browser\" && exit 1"
