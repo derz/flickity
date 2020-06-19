@@ -1,4 +1,5 @@
 // Flickity main
+/* eslint-disable max-params */
 ( function( window, factory ) {
   // universal module definition
   /* jshint strict: false */
@@ -10,40 +11,40 @@
       'fizzy-ui-utils/utils',
       './cell',
       './slide',
-      './animate'
+      './animate',
     ], function( EvEmitter, getSize, utils, Cell, Slide, animatePrototype ) {
       return factory( window, EvEmitter, getSize, utils, Cell, Slide, animatePrototype );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('ev-emitter'),
-      require('get-size'),
-      require('fizzy-ui-utils'),
-      require('./cell'),
-      require('./slide'),
-      require('./animate')
+        window,
+        require('ev-emitter'),
+        require('get-size'),
+        require('fizzy-ui-utils'),
+        require('./cell'),
+        require('./slide'),
+        require('./animate')
     );
   } else {
     // browser global
     var _Flickity = window.Flickity;
 
     window.Flickity = factory(
-      window,
-      window.EvEmitter,
-      window.getSize,
-      window.fizzyUIUtils,
-      _Flickity.Cell,
-      _Flickity.Slide,
-      _Flickity.animatePrototype
+        window,
+        window.EvEmitter,
+        window.getSize,
+        window.fizzyUIUtils,
+        _Flickity.Cell,
+        _Flickity.Slide,
+        _Flickity.animatePrototype
     );
   }
 
-}( typeof window !== 'undefined' ? window : this, 
-  function factory( window, EvEmitter, getSize,
-  utils, Cell, Slide, animatePrototype ) {
+}( window, function factory( window, EvEmitter, getSize,
+    utils, Cell, Slide, animatePrototype ) {
 
+/* eslint-enable max-params */
 'use strict';
 
 // vars
@@ -106,7 +107,7 @@ Flickity.defaults = {
   percentPosition: true,
   resize: true,
   selectedAttraction: 0.025,
-  setGallerySize: true
+  setGallerySize: true,
   // watchCSS: false,
   // wrapAround: false
 };
@@ -160,7 +161,7 @@ proto._create = function() {
 
 /**
  * set options
- * @param {Object} opts
+ * @param {Object} opts - options to extend
  */
 proto.option = function( opts ) {
   utils.extend( this.options, opts );
@@ -231,7 +232,7 @@ proto.reloadCells = function() {
 
 /**
  * turn elements into Flickity.Cells
- * @param {Array or NodeList or HTMLElement} elems
+ * @param {[Array, NodeList, HTMLElement]} elems - elements to make into cells
  * @returns {Array} items - collection of new Flickity Cells
  */
 proto._makeCells = function( elems ) {
@@ -277,7 +278,7 @@ proto._positionCells = function( index ) {
     cellX = startCell.x + startCell.size.outerWidth;
   }
   var len = this.cells.length;
-  for ( var i=index; i < len; i++ ) {
+  for ( var i = index; i < len; i++ ) {
     var cell = this.cells[i];
     cell.setPosition( cellX );
     cellX += cell.size.outerWidth;
@@ -295,12 +296,12 @@ proto._positionCells = function( index ) {
 
 /**
  * cell.getSize() on multiple cells
- * @param {Array} cells
+ * @param {Array} cells - cells to size
  */
 proto._sizeCells = function( cells ) {
   cells.forEach( function( cell ) {
     cell.getSize();
-  });
+  } );
 };
 
 // --------------------------  -------------------------- //
@@ -361,9 +362,10 @@ proto._getCanCellFit = function() {
   // default, group by width of slide
   // parse '75%
   var percentMatch = typeof groupCells == 'string' &&
-    groupCells.match(/^(\d+)%$/);
+    groupCells.match( /^(\d+)%$/ );
   var percent = percentMatch ? parseInt( percentMatch[1], 10 ) / 100 : 1;
   return function( i, slideWidth ) {
+    /* eslint-disable-next-line no-invalid-this */
     return slideWidth <= ( this.size.innerWidth + 1 ) * percent;
   };
 };
@@ -385,16 +387,16 @@ var cellAlignShorthands = {
   // cell align, then based on origin side
   center: {
     left: 0.5,
-    right: 0.5
+    right: 0.5,
   },
   left: {
     left: 0,
-    right: 1
+    right: 1,
   },
   right: {
     right: 0,
-    left: 1
-  }
+    left: 1,
+  },
 };
 
 proto.setCellAlign = function() {
@@ -492,7 +494,7 @@ proto.dispatchEvent = function( type, event, args ) {
     var $event = type;
     if ( event ) {
       // create jQuery event
-      var jQEvent = jQuery.Event( event );
+      var jQEvent = new jQuery.Event( event );
       jQEvent.type = type;
       $event = jQEvent;
     }
@@ -627,7 +629,9 @@ proto.selectInitialIndex = function() {
 
 /**
  * select slide from number or cell element
- * @param {Element or Number} elem
+ * @param {[Element, Number]} value - zero-based index or element to select
+ * @param {Boolean} isWrap - enables wrapping around for extra index
+ * @param {Boolean} isInstant - disables slide animation
  */
 proto.selectCell = function( value, isWrap, isInstant ) {
   // get cell
@@ -642,7 +646,7 @@ proto.selectCell = function( value, isWrap, isInstant ) {
 
 proto.getCellSlideIndex = function( cell ) {
   // get index of slides that has cell
-  for ( var i=0; i < this.slides.length; i++ ) {
+  for ( var i = 0; i < this.slides.length; i++ ) {
     var slide = this.slides[i];
     var index = slide.cells.indexOf( cell );
     if ( index != -1 ) {
@@ -655,12 +659,12 @@ proto.getCellSlideIndex = function( cell ) {
 
 /**
  * get Flickity.Cell, given an Element
- * @param {Element} elem
- * @returns {Flickity.Cell} item
+ * @param {Element} elem - matching cell element
+ * @returns {Flickity.Cell} cell - matching cell
  */
 proto.getCell = function( elem ) {
   // loop through cells to get the one that matches
-  for ( var i=0; i < this.cells.length; i++ ) {
+  for ( var i = 0; i < this.cells.length; i++ ) {
     var cell = this.cells[i];
     if ( cell.element == elem ) {
       return cell;
@@ -670,7 +674,7 @@ proto.getCell = function( elem ) {
 
 /**
  * get collection of Flickity.Cells, given Elements
- * @param {Element, Array, NodeList} elems
+ * @param {[Element, Array, NodeList]} elems - multiple elements
  * @returns {Array} cells - Flickity.Cells
  */
 proto.getCells = function( elems ) {
@@ -692,13 +696,13 @@ proto.getCells = function( elems ) {
 proto.getCellElements = function() {
   return this.cells.map( function( cell ) {
     return cell.element;
-  });
+  } );
 };
 
 /**
  * get parent cell from an element
- * @param {Element} elem
- * @returns {Flickit.Cell} cell
+ * @param {Element} elem - child element
+ * @returns {Flickit.Cell} cell - parent cell
  */
 proto.getParentCell = function( elem ) {
   // first check if elem is cell
@@ -729,7 +733,7 @@ proto.getAdjacentCellElements = function( adjCount, index ) {
   }
 
   var cellElems = [];
-  for ( var i = index - adjCount; i <= index + adjCount ; i++ ) {
+  for ( var i = index - adjCount; i <= index + adjCount; i++ ) {
     var slideIndex = this.options.wrapAround ? utils.modulo( i, len ) : i;
     var slide = this.slides[ slideIndex ];
     if ( slide ) {
@@ -741,7 +745,8 @@ proto.getAdjacentCellElements = function( adjCount, index ) {
 
 /**
  * select slide from number or cell element
- * @param {Element, Selector String, or Number} selector
+ * @param {[Element, String, Number]} selector - element, selector string, or index
+ * @returns {Flickity.Cell} - matching cell
  */
 proto.queryCell = function( selector ) {
   if ( typeof selector == 'number' ) {
@@ -750,7 +755,7 @@ proto.queryCell = function( selector ) {
   }
   if ( typeof selector == 'string' ) {
     // do not select invalid selectors from hash: #123, #/. #791
-    if ( selector.match(/^[#\.]?[\d\/]/) ) {
+    if ( selector.match( /^[#.]?[\d/]/ ) ) {
       return;
     }
     // use string as selector, get element
@@ -825,7 +830,7 @@ proto.watchCSS = function() {
 proto.onkeydown = function( event ) {
   // only work if element is in focus
   var isNotFocused = document.activeElement && document.activeElement != this.element;
-  if ( !this.options.accessibility ||isNotFocused ) {
+  if ( !this.options.accessibility || isNotFocused ) {
     return;
   }
 
@@ -854,7 +859,8 @@ Flickity.keyboardHandlers = {
 
 proto.focus = function() {
   // TODO remove scrollTo once focus options gets more support
-  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus#Browser_compatibility
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus ...
+  //    #Browser_compatibility
   var prevScrollY = window.pageYOffset;
   this.element.focus({ preventScroll: true });
   // hack to fix scroll jump after focus, #76
@@ -876,13 +882,10 @@ proto.deactivate = function() {
   // destroy cells
   this.cells.forEach( function( cell ) {
     cell.destroy();
-  });
-  this.unselectSelectedSlide();
-  if (!this.options.viewport && !this.options.slider) {
-    this.element.removeChild( this.viewport );
-    // move child elements back into element
-    moveElements( this.slider.children, this.element );
-  }
+  } );
+  this.element.removeChild( this.viewport );
+  // move child elements back into element
+  moveElements( this.slider.children, this.element );
   if ( this.options.accessibility ) {
     this.element.removeAttribute('tabIndex');
     this.element.removeEventListener( 'keydown', this );
@@ -912,8 +915,8 @@ utils.extend( proto, animatePrototype );
 
 /**
  * get Flickity instance from element
- * @param {Element} elem
- * @returns {Flickity}
+ * @param {[Element, String]} elem - element or selector string
+ * @returns {Flickity} - Flickity instance
  */
 Flickity.data = function( elem ) {
   elem = utils.getQueryElement( elem );
@@ -937,4 +940,4 @@ Flickity.Slide = Slide;
 
 return Flickity;
 
-}));
+} ) );
