@@ -6,7 +6,7 @@
  * or Flickity Commercial License for commercial use
  *
  * https://flickity.metafizzy.co
- * Copyright 2015-2019 Metafizzy
+ * Copyright 2015-2020 Metafizzy
  */
 
 /**
@@ -777,22 +777,22 @@ return utils;
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/cell',[
-      'get-size/get-size'
+      'get-size/get-size',
     ], function( getSize ) {
       return factory( window, getSize );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('get-size')
+        window,
+        require('get-size')
     );
   } else {
     // browser global
     window.Flickity = window.Flickity || {};
     window.Flickity.Cell = factory(
-      window,
-      window.getSize
+        window,
+        window.getSize
     );
   }
 
@@ -822,6 +822,7 @@ proto.destroy = function() {
   this.element.style.position = '';
   var side = this.parent.originSide;
   this.element.style[ side ] = '';
+  this.element.removeAttribute('aria-hidden');
 };
 
 proto.getSize = function() {
@@ -858,8 +859,8 @@ proto.unselect = function() {
 };
 
 /**
- * @param {Integer} factor - 0, 1, or -1
-**/
+ * @param {Integer} shift - 0, 1, or -1
+ */
 proto.wrapShift = function( shift ) {
   this.shift = shift;
   this.renderPosition( this.x + this.parent.slideableWidth * shift );
@@ -871,7 +872,7 @@ proto.remove = function() {
 
 return Cell;
 
-}));
+} ) );
 
 // slide
 ( function( window, factory ) {
@@ -929,24 +930,24 @@ proto.getLastCell = function() {
 proto.select = function() {
   this.cells.forEach( function( cell ) {
     cell.select();
-  });
+  } );
 };
 
 proto.unselect = function() {
   this.cells.forEach( function( cell ) {
     cell.unselect();
-  });
+  } );
 };
 
 proto.getCellElements = function() {
   return this.cells.map( function( cell ) {
     return cell.element;
-  });
+  } );
 };
 
 return Slide;
 
-}));
+} ) );
 
 // animate
 ( function( window, factory ) {
@@ -955,22 +956,22 @@ return Slide;
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/animate',[
-      'fizzy-ui-utils/utils'
+      'fizzy-ui-utils/utils',
     ], function( utils ) {
       return factory( window, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('fizzy-ui-utils')
+        window,
+        require('fizzy-ui-utils')
     );
   } else {
     // browser global
     window.Flickity = window.Flickity || {};
     window.Flickity.animatePrototype = factory(
-      window,
-      window.fizzyUIUtils
+        window,
+        window.fizzyUIUtils
     );
   }
 
@@ -1019,9 +1020,7 @@ proto.animate = function() {
     var _this = this;
     requestAnimationFrame( function animateFrame() {
       _this.animate();
-    });
-  } else {
-    this.lastTime = false;
+    } );
   }
 };
 
@@ -1030,7 +1029,7 @@ proto.positionSlider = function() {
   // wrap position around
   if ( this.options.wrapAround && this.cells.length > 1 ) {
     x = utils.modulo( x, this.slideableWidth );
-    x = x - this.slideableWidth;
+    x -= this.slideableWidth;
     this.shiftWrapCells( x );
   }
 
@@ -1071,7 +1070,7 @@ proto.positionSliderAtSelected = function() {
 proto.getPositionValue = function( position ) {
   if ( this.options.percentPosition ) {
     // percent position, round to 2 digits, like 12.34%
-    return ( Math.round( ( position / this.size.innerWidth ) * 10000 ) * 0.01 )+ '%';
+    return ( Math.round( ( position / this.size.innerWidth ) * 10000 ) * 0.01 ) + '%';
   } else {
     // pixel positioning
     return Math.round( position ) + 'px';
@@ -1080,7 +1079,9 @@ proto.getPositionValue = function( position ) {
 
 proto.settle = function( previousX ) {
   // keep track of frames where x hasn't moved
-  if ( !this.isPointerDown && Math.round( this.x * 100 ) == Math.round( previousX * 100 ) ) {
+  var isResting = !this.isPointerDown &&
+      Math.round( this.x * 100 ) == Math.round( previousX * 100 );
+  if ( isResting ) {
     this.restingFrames++;
   }
   // stop animating if resting for 3 or more frames
@@ -1103,7 +1104,7 @@ proto.shiftWrapCells = function( x ) {
 };
 
 proto._shiftCells = function( cells, gap, shift ) {
-  for ( var i=0; i < cells.length; i++ ) {
+  for ( var i = 0; i < cells.length; i++ ) {
     var cell = cells[i];
     var cellShift = gap > 0 ? shift : 0;
     cell.wrapShift( cellShift );
@@ -1115,7 +1116,7 @@ proto._unshiftCells = function( cells ) {
   if ( !cells || !cells.length ) {
     return;
   }
-  for ( var i=0; i < cells.length; i++ ) {
+  for ( var i = 0; i < cells.length; i++ ) {
     cells[i].wrapShift( 0 );
   }
 };
@@ -1164,9 +1165,10 @@ proto.applySelectedAttraction = function() {
 
 return proto;
 
-}));
+} ) );
 
 // Flickity main
+/* eslint-disable max-params */
 ( function( window, factory ) {
   // universal module definition
   /* jshint strict: false */
@@ -1178,40 +1180,40 @@ return proto;
       'fizzy-ui-utils/utils',
       './cell',
       './slide',
-      './animate'
+      './animate',
     ], function( EvEmitter, getSize, utils, Cell, Slide, animatePrototype ) {
       return factory( window, EvEmitter, getSize, utils, Cell, Slide, animatePrototype );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('ev-emitter'),
-      require('get-size'),
-      require('fizzy-ui-utils'),
-      require('./cell'),
-      require('./slide'),
-      require('./animate')
+        window,
+        require('ev-emitter'),
+        require('get-size'),
+        require('fizzy-ui-utils'),
+        require('./cell'),
+        require('./slide'),
+        require('./animate')
     );
   } else {
     // browser global
     var _Flickity = window.Flickity;
 
     window.Flickity = factory(
-      window,
-      window.EvEmitter,
-      window.getSize,
-      window.fizzyUIUtils,
-      _Flickity.Cell,
-      _Flickity.Slide,
-      _Flickity.animatePrototype
+        window,
+        window.EvEmitter,
+        window.getSize,
+        window.fizzyUIUtils,
+        _Flickity.Cell,
+        _Flickity.Slide,
+        _Flickity.animatePrototype
     );
   }
 
-}( typeof window !== 'undefined' ? window : this, 
-  function factory( window, EvEmitter, getSize,
-  utils, Cell, Slide, animatePrototype ) {
+}( window, function factory( window, EvEmitter, getSize,
+    utils, Cell, Slide, animatePrototype ) {
 
+/* eslint-enable max-params */
 
 
 // vars
@@ -1274,7 +1276,7 @@ Flickity.defaults = {
   percentPosition: true,
   resize: true,
   selectedAttraction: 0.025,
-  setGallerySize: true
+  setGallerySize: true,
   // watchCSS: false,
   // wrapAround: false
 };
@@ -1328,7 +1330,7 @@ proto._create = function() {
 
 /**
  * set options
- * @param {Object} opts
+ * @param {Object} opts - options to extend
  */
 proto.option = function( opts ) {
   utils.extend( this.options, opts );
@@ -1399,7 +1401,7 @@ proto.reloadCells = function() {
 
 /**
  * turn elements into Flickity.Cells
- * @param {Array or NodeList or HTMLElement} elems
+ * @param {[Array, NodeList, HTMLElement]} elems - elements to make into cells
  * @returns {Array} items - collection of new Flickity Cells
  */
 proto._makeCells = function( elems ) {
@@ -1445,7 +1447,7 @@ proto._positionCells = function( index ) {
     cellX = startCell.x + startCell.size.outerWidth;
   }
   var len = this.cells.length;
-  for ( var i=index; i < len; i++ ) {
+  for ( var i = index; i < len; i++ ) {
     var cell = this.cells[i];
     cell.setPosition( cellX );
     cellX += cell.size.outerWidth;
@@ -1463,12 +1465,12 @@ proto._positionCells = function( index ) {
 
 /**
  * cell.getSize() on multiple cells
- * @param {Array} cells
+ * @param {Array} cells - cells to size
  */
 proto._sizeCells = function( cells ) {
   cells.forEach( function( cell ) {
     cell.getSize();
-  });
+  } );
 };
 
 // --------------------------  -------------------------- //
@@ -1529,9 +1531,10 @@ proto._getCanCellFit = function() {
   // default, group by width of slide
   // parse '75%
   var percentMatch = typeof groupCells == 'string' &&
-    groupCells.match(/^(\d+)%$/);
+    groupCells.match( /^(\d+)%$/ );
   var percent = percentMatch ? parseInt( percentMatch[1], 10 ) / 100 : 1;
   return function( i, slideWidth ) {
+    /* eslint-disable-next-line no-invalid-this */
     return slideWidth <= ( this.size.innerWidth + 1 ) * percent;
   };
 };
@@ -1553,16 +1556,16 @@ var cellAlignShorthands = {
   // cell align, then based on origin side
   center: {
     left: 0.5,
-    right: 0.5
+    right: 0.5,
   },
   left: {
     left: 0,
-    right: 1
+    right: 1,
   },
   right: {
     right: 0,
-    left: 1
-  }
+    left: 1,
+  },
 };
 
 proto.setCellAlign = function() {
@@ -1660,7 +1663,7 @@ proto.dispatchEvent = function( type, event, args ) {
     var $event = type;
     if ( event ) {
       // create jQuery event
-      var jQEvent = jQuery.Event( event );
+      var jQEvent = new jQuery.Event( event );
       jQEvent.type = type;
       $event = jQEvent;
     }
@@ -1795,7 +1798,9 @@ proto.selectInitialIndex = function() {
 
 /**
  * select slide from number or cell element
- * @param {Element or Number} elem
+ * @param {[Element, Number]} value - zero-based index or element to select
+ * @param {Boolean} isWrap - enables wrapping around for extra index
+ * @param {Boolean} isInstant - disables slide animation
  */
 proto.selectCell = function( value, isWrap, isInstant ) {
   // get cell
@@ -1810,7 +1815,7 @@ proto.selectCell = function( value, isWrap, isInstant ) {
 
 proto.getCellSlideIndex = function( cell ) {
   // get index of slides that has cell
-  for ( var i=0; i < this.slides.length; i++ ) {
+  for ( var i = 0; i < this.slides.length; i++ ) {
     var slide = this.slides[i];
     var index = slide.cells.indexOf( cell );
     if ( index != -1 ) {
@@ -1823,12 +1828,12 @@ proto.getCellSlideIndex = function( cell ) {
 
 /**
  * get Flickity.Cell, given an Element
- * @param {Element} elem
- * @returns {Flickity.Cell} item
+ * @param {Element} elem - matching cell element
+ * @returns {Flickity.Cell} cell - matching cell
  */
 proto.getCell = function( elem ) {
   // loop through cells to get the one that matches
-  for ( var i=0; i < this.cells.length; i++ ) {
+  for ( var i = 0; i < this.cells.length; i++ ) {
     var cell = this.cells[i];
     if ( cell.element == elem ) {
       return cell;
@@ -1838,7 +1843,7 @@ proto.getCell = function( elem ) {
 
 /**
  * get collection of Flickity.Cells, given Elements
- * @param {Element, Array, NodeList} elems
+ * @param {[Element, Array, NodeList]} elems - multiple elements
  * @returns {Array} cells - Flickity.Cells
  */
 proto.getCells = function( elems ) {
@@ -1860,13 +1865,13 @@ proto.getCells = function( elems ) {
 proto.getCellElements = function() {
   return this.cells.map( function( cell ) {
     return cell.element;
-  });
+  } );
 };
 
 /**
  * get parent cell from an element
- * @param {Element} elem
- * @returns {Flickit.Cell} cell
+ * @param {Element} elem - child element
+ * @returns {Flickit.Cell} cell - parent cell
  */
 proto.getParentCell = function( elem ) {
   // first check if elem is cell
@@ -1897,7 +1902,7 @@ proto.getAdjacentCellElements = function( adjCount, index ) {
   }
 
   var cellElems = [];
-  for ( var i = index - adjCount; i <= index + adjCount ; i++ ) {
+  for ( var i = index - adjCount; i <= index + adjCount; i++ ) {
     var slideIndex = this.options.wrapAround ? utils.modulo( i, len ) : i;
     var slide = this.slides[ slideIndex ];
     if ( slide ) {
@@ -1909,7 +1914,8 @@ proto.getAdjacentCellElements = function( adjCount, index ) {
 
 /**
  * select slide from number or cell element
- * @param {Element, Selector String, or Number} selector
+ * @param {[Element, String, Number]} selector - element, selector string, or index
+ * @returns {Flickity.Cell} - matching cell
  */
 proto.queryCell = function( selector ) {
   if ( typeof selector == 'number' ) {
@@ -1918,7 +1924,7 @@ proto.queryCell = function( selector ) {
   }
   if ( typeof selector == 'string' ) {
     // do not select invalid selectors from hash: #123, #/. #791
-    if ( selector.match(/^[#\.]?[\d\/]/) ) {
+    if ( selector.match( /^[#.]?[\d/]/ ) ) {
       return;
     }
     // use string as selector, get element
@@ -1993,7 +1999,7 @@ proto.watchCSS = function() {
 proto.onkeydown = function( event ) {
   // only work if element is in focus
   var isNotFocused = document.activeElement && document.activeElement != this.element;
-  if ( !this.options.accessibility ||isNotFocused ) {
+  if ( !this.options.accessibility || isNotFocused ) {
     return;
   }
 
@@ -2022,7 +2028,8 @@ Flickity.keyboardHandlers = {
 
 proto.focus = function() {
   // TODO remove scrollTo once focus options gets more support
-  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus#Browser_compatibility
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus ...
+  //    #Browser_compatibility
   var prevScrollY = window.pageYOffset;
   this.element.focus({ preventScroll: true });
   // hack to fix scroll jump after focus, #76
@@ -2044,13 +2051,10 @@ proto.deactivate = function() {
   // destroy cells
   this.cells.forEach( function( cell ) {
     cell.destroy();
-  });
-  this.unselectSelectedSlide();
-  if (!this.options.viewport && !this.options.slider) {
-    this.element.removeChild( this.viewport );
-    // move child elements back into element
-    moveElements( this.slider.children, this.element );
-  }
+  } );
+  this.element.removeChild( this.viewport );
+  // move child elements back into element
+  moveElements( this.slider.children, this.element );
   if ( this.options.accessibility ) {
     this.element.removeAttribute('tabIndex');
     this.element.removeEventListener( 'keydown', this );
@@ -2080,8 +2084,8 @@ utils.extend( proto, animatePrototype );
 
 /**
  * get Flickity instance from element
- * @param {Element} elem
- * @returns {Flickity}
+ * @param {[Element, String]} elem - element or selector string
+ * @returns {Flickity} - Flickity instance
  */
 Flickity.data = function( elem ) {
   elem = utils.getQueryElement( elem );
@@ -2105,7 +2109,7 @@ Flickity.Slide = Slide;
 
 return Flickity;
 
-}));
+} ) );
 
 /*!
  * Unipointer v2.3.0
@@ -2410,7 +2414,7 @@ return Unipointer;
 }));
 
 /*!
- * Unidragger v2.3.0
+ * Unidragger v2.3.1
  * Draggable base class
  * MIT license
  */
@@ -2500,7 +2504,11 @@ proto.pointerDown = function( event, pointer ) {
     return;
   }
   // track start event position
-  this.pointerDownPointer = pointer;
+  // Safari 9 overrides pageX and pageY. These values needs to be copied. flickity#842
+  this.pointerDownPointer = {
+    pageX: pointer.pageX,
+    pageY: pointer.pageY,
+  };
 
   event.preventDefault();
   this.pointerDownBlur();
@@ -2698,25 +2706,25 @@ return Unidragger;
     define( 'flickity/js/drag',[
       './flickity',
       'unidragger/unidragger',
-      'fizzy-ui-utils/utils'
+      'fizzy-ui-utils/utils',
     ], function( Flickity, Unidragger, utils ) {
       return factory( window, Flickity, Unidragger, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./flickity'),
-      require('unidragger'),
-      require('fizzy-ui-utils')
+        window,
+        require('./flickity'),
+        require('unidragger'),
+        require('fizzy-ui-utils')
     );
   } else {
     // browser global
     window.Flickity = factory(
-      window,
-      window.Flickity,
-      window.Unidragger,
-      window.fizzyUIUtils
+        window,
+        window.Flickity,
+        window.Unidragger,
+        window.fizzyUIUtils
     );
   }
 
@@ -2729,7 +2737,7 @@ return Unidragger;
 utils.extend( Flickity.defaults, {
   draggable: '>1',
   dragThreshold: 3,
-});
+} );
 
 // ----- create ----- //
 
@@ -2755,7 +2763,7 @@ proto._createDrag = function() {
   // HACK - add seemingly innocuous handler to fix iOS 10 scroll behavior
   // #457, RubaXa/Sortable#973
   if ( isTouch && !isTouchmoveScrollCanceled ) {
-    window.addEventListener( 'touchmove', function() {});
+    window.addEventListener( 'touchmove', function() {} );
     isTouchmoveScrollCanceled = true;
   }
 };
@@ -2914,7 +2922,7 @@ proto.dragMove = function( event, pointer, moveVector ) {
   var direction = this.options.rightToLeft ? -1 : 1;
   if ( this.options.wrapAround ) {
     // wrap around move. #589
-    moveVector.x = moveVector.x % this.slideableWidth;
+    moveVector.x %= this.slideableWidth;
   }
   var dragX = this.dragStartPosition + moveVector.x * direction;
 
@@ -2989,7 +2997,11 @@ proto._getClosestResting = function( restingX, distance, increment ) {
   var minDistance = Infinity;
   var condition = this.options.contain && !this.options.wrapAround ?
     // if contain, keep going if distance is equal to minDistance
-    function( d, md ) { return d <= md; } : function( d, md ) { return d < md; };
+    function( dist, minDist ) {
+      return dist <= minDist;
+    } : function( dist, minDist ) {
+      return dist < minDist;
+    };
   while ( condition( distance, minDistance ) ) {
     // measure distance to next cell
     index += increment;
@@ -3003,14 +3015,15 @@ proto._getClosestResting = function( restingX, distance, increment ) {
   return {
     distance: minDistance,
     // selected was previous index
-    index: index - increment
+    index: index - increment,
   };
 };
 
 /**
  * measure distance between x and a slide target
- * @param {Number} x
+ * @param {Number} x - horizontal position
  * @param {Integer} index - slide index
+ * @returns {Number} - slide distance
  */
 proto.getSlideDistance = function( x, index ) {
   var len = this.slides.length;
@@ -3022,7 +3035,7 @@ proto.getSlideDistance = function( x, index ) {
     return null;
   }
   // add distance for wrap-around slides
-  var wrap = isWrapAround ? this.slideableWidth * Math.floor( index / len ) : 0;
+  var wrap = isWrapAround ? this.slideableWidth * Math.floor( index/len ) : 0;
   return x - ( slide.target + wrap );
 };
 
@@ -3073,7 +3086,7 @@ proto.onscroll = function() {
 function getScrollPosition() {
   return {
     x: window.pageXOffset,
-    y: window.pageYOffset
+    y: window.pageYOffset,
   };
 }
 
@@ -3081,7 +3094,7 @@ function getScrollPosition() {
 
 return Flickity;
 
-}));
+} ) );
 
 // prev/next buttons
 ( function( window, factory ) {
@@ -3092,25 +3105,25 @@ return Flickity;
     define( 'flickity/js/prev-next-button',[
       './flickity',
       'unipointer/unipointer',
-      'fizzy-ui-utils/utils'
+      'fizzy-ui-utils/utils',
     ], function( Flickity, Unipointer, utils ) {
       return factory( window, Flickity, Unipointer, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./flickity'),
-      require('unipointer'),
-      require('fizzy-ui-utils')
+        window,
+        require('./flickity'),
+        require('unipointer'),
+        require('fizzy-ui-utils')
     );
   } else {
     // browser global
     factory(
-      window,
-      window.Flickity,
-      window.Unipointer,
-      window.fizzyUIUtils
+        window,
+        window.Flickity,
+        window.Unipointer,
+        window.fizzyUIUtils
     );
   }
 
@@ -3170,10 +3183,10 @@ PrevNextButton.prototype.deactivate = function() {
 };
 
 PrevNextButton.prototype.createSVG = function() {
-  var svg = document.createElementNS( svgURI, 'svg');
+  var svg = document.createElementNS( svgURI, 'svg' );
   svg.setAttribute( 'class', 'flickity-button-icon' );
   svg.setAttribute( 'viewBox', '0 0 100 100' );
-  var path = document.createElementNS( svgURI, 'path');
+  var path = document.createElementNS( svgURI, 'path' );
   var pathMovements = getArrowMovements( this.parent.options.arrowShape );
   path.setAttribute( 'd', pathMovements );
   path.setAttribute( 'class', 'arrow' );
@@ -3257,9 +3270,9 @@ utils.extend( Flickity.defaults, {
     x0: 10,
     x1: 60, y1: 50,
     x2: 70, y2: 40,
-    x3: 30
-  }
-});
+    x3: 30,
+  },
+} );
 
 Flickity.createMethods.push('_createPrevNextButtons');
 var proto = Flickity.prototype;
@@ -3293,7 +3306,7 @@ Flickity.PrevNextButton = PrevNextButton;
 
 return Flickity;
 
-}));
+} ) );
 
 // page dots
 ( function( window, factory ) {
@@ -3304,25 +3317,25 @@ return Flickity;
     define( 'flickity/js/page-dots',[
       './flickity',
       'unipointer/unipointer',
-      'fizzy-ui-utils/utils'
+      'fizzy-ui-utils/utils',
     ], function( Flickity, Unipointer, utils ) {
       return factory( window, Flickity, Unipointer, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./flickity'),
-      require('unipointer'),
-      require('fizzy-ui-utils')
+        window,
+        require('./flickity'),
+        require('unipointer'),
+        require('fizzy-ui-utils')
     );
   } else {
     // browser global
     factory(
-      window,
-      window.Flickity,
-      window.Unipointer,
-      window.fizzyUIUtils
+        window,
+        window.Flickity,
+        window.Unipointer,
+        window.fizzyUIUtils
     );
   }
 
@@ -3441,8 +3454,8 @@ Flickity.PageDots = PageDots;
 // -------------------------- Flickity -------------------------- //
 
 utils.extend( Flickity.defaults, {
-  pageDots: true
-});
+  pageDots: true,
+} );
 
 Flickity.createMethods.push('_createPageDots');
 
@@ -3483,7 +3496,7 @@ Flickity.PageDots = PageDots;
 
 return Flickity;
 
-}));
+} ) );
 
 // player & autoPlay
 ( function( window, factory ) {
@@ -3494,23 +3507,23 @@ return Flickity;
     define( 'flickity/js/player',[
       'ev-emitter/ev-emitter',
       'fizzy-ui-utils/utils',
-      './flickity'
+      './flickity',
     ], function( EvEmitter, utils, Flickity ) {
       return factory( EvEmitter, utils, Flickity );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      require('ev-emitter'),
-      require('fizzy-ui-utils'),
-      require('./flickity')
+        require('ev-emitter'),
+        require('fizzy-ui-utils'),
+        require('./flickity')
     );
   } else {
     // browser global
     factory(
-      window.EvEmitter,
-      window.fizzyUIUtils,
-      window.Flickity
+        window.EvEmitter,
+        window.fizzyUIUtils,
+        window.Flickity
     );
   }
 
@@ -3606,8 +3619,8 @@ Player.prototype.visibilityPlay = function() {
 // -------------------------- Flickity -------------------------- //
 
 utils.extend( Flickity.defaults, {
-  pauseAutoPlayOnHover: true
-});
+  pauseAutoPlayOnHover: true,
+} );
 
 Flickity.createMethods.push('_createPlayer');
 var proto = Flickity.prototype;
@@ -3675,7 +3688,7 @@ Flickity.Player = Player;
 
 return Flickity;
 
-}));
+} ) );
 
 // add, remove cell
 ( function( window, factory ) {
@@ -3685,23 +3698,23 @@ return Flickity;
     // AMD
     define( 'flickity/js/add-remove-cell',[
       './flickity',
-      'fizzy-ui-utils/utils'
+      'fizzy-ui-utils/utils',
     ], function( Flickity, utils ) {
       return factory( window, Flickity, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./flickity'),
-      require('fizzy-ui-utils')
+        window,
+        require('./flickity'),
+        require('fizzy-ui-utils')
     );
   } else {
     // browser global
     factory(
-      window,
-      window.Flickity,
-      window.fizzyUIUtils
+        window,
+        window.Flickity,
+        window.fizzyUIUtils
     );
   }
 
@@ -3714,7 +3727,7 @@ function getCellsFragment( cells ) {
   var fragment = document.createDocumentFragment();
   cells.forEach( function( cell ) {
     fragment.appendChild( cell.element );
-  });
+  } );
   return fragment;
 }
 
@@ -3724,8 +3737,8 @@ var proto = Flickity.prototype;
 
 /**
  * Insert, prepend, or append cells
- * @param {Element, Array, NodeList} elems
- * @param {Integer} index
+ * @param {[Element, Array, NodeList]} elems - Elements to insert
+ * @param {Integer} index - Zero-based number to insert
  */
 proto.insert = function( elems, index ) {
   var cells = this._makeCells( elems );
@@ -3772,7 +3785,7 @@ proto.prepend = function( elems ) {
 
 /**
  * Remove cells
- * @param {Element, Array, NodeList} elems
+ * @param {[Element, Array, NodeList]} elems - ELements to remove
  */
 proto.remove = function( elems ) {
   var cells = this.getCells( elems );
@@ -3810,6 +3823,7 @@ proto.cellSizeChange = function( elem ) {
 /**
  * logic any time a cell is changed: added, removed, or size changed
  * @param {Integer} changedCellIndex - index of the changed cell, optional
+ * @param {Boolean} isPositioningSlider - Positions slider after selection
  */
 proto.cellChange = function( changedCellIndex, isPositioningSlider ) {
   var prevSelectedElem = this.selectedElement;
@@ -3837,7 +3851,144 @@ proto.cellChange = function( changedCellIndex, isPositioningSlider ) {
 
 return Flickity;
 
-}));
+} ) );
+
+// lazyload
+( function( window, factory ) {
+  // universal module definition
+  /* jshint strict: false */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'flickity/js/lazyload',[
+      './flickity',
+      'fizzy-ui-utils/utils',
+    ], function( Flickity, utils ) {
+      return factory( window, Flickity, utils );
+    } );
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+        window,
+        require('./flickity'),
+        require('fizzy-ui-utils')
+    );
+  } else {
+    // browser global
+    factory(
+        window,
+        window.Flickity,
+        window.fizzyUIUtils
+    );
+  }
+
+}( window, function factory( window, Flickity, utils ) {
+'use strict';
+
+Flickity.createMethods.push('_createLazyload');
+var proto = Flickity.prototype;
+
+proto._createLazyload = function() {
+  this.on( 'select', this.lazyLoad );
+};
+
+proto.lazyLoad = function() {
+  var lazyLoad = this.options.lazyLoad;
+  if ( !lazyLoad ) {
+    return;
+  }
+  // get adjacent cells, use lazyLoad option for adjacent count
+  var adjCount = typeof lazyLoad == 'number' ? lazyLoad : 0;
+  var cellElems = this.getAdjacentCellElements( adjCount );
+  // get lazy images in those cells
+  var lazyImages = [];
+  cellElems.forEach( function( cellElem ) {
+    var lazyCellImages = getCellLazyImages( cellElem );
+    lazyImages = lazyImages.concat( lazyCellImages );
+  } );
+  // load lazy images
+  lazyImages.forEach( function( img ) {
+    new LazyLoader( img, this );
+  }, this );
+};
+
+function getCellLazyImages( cellElem ) {
+  // check if cell element is lazy image
+  if ( cellElem.nodeName == 'IMG' ) {
+    var lazyloadAttr = cellElem.getAttribute('data-flickity-lazyload');
+    var srcAttr = cellElem.getAttribute('data-flickity-lazyload-src');
+    var srcsetAttr = cellElem.getAttribute('data-flickity-lazyload-srcset');
+    if ( lazyloadAttr || srcAttr || srcsetAttr ) {
+      return [ cellElem ];
+    }
+  }
+  // select lazy images in cell
+  var lazySelector = 'img[data-flickity-lazyload], ' +
+    'img[data-flickity-lazyload-src], img[data-flickity-lazyload-srcset]';
+  var imgs = cellElem.querySelectorAll( lazySelector );
+  return utils.makeArray( imgs );
+}
+
+// -------------------------- LazyLoader -------------------------- //
+
+/**
+ * class to handle loading images
+ * @param {Image} img - Image element
+ * @param {Flickity} flickity - Flickity instance
+ */
+function LazyLoader( img, flickity ) {
+  this.img = img;
+  this.flickity = flickity;
+  this.load();
+}
+
+LazyLoader.prototype.handleEvent = utils.handleEvent;
+
+LazyLoader.prototype.load = function() {
+  this.img.addEventListener( 'load', this );
+  this.img.addEventListener( 'error', this );
+  // get src & srcset
+  var src = this.img.getAttribute('data-flickity-lazyload') ||
+    this.img.getAttribute('data-flickity-lazyload-src');
+  var srcset = this.img.getAttribute('data-flickity-lazyload-srcset');
+  // set src & serset
+  this.img.src = src;
+  if ( srcset ) {
+    this.img.setAttribute( 'srcset', srcset );
+  }
+  // remove attr
+  this.img.removeAttribute('data-flickity-lazyload');
+  this.img.removeAttribute('data-flickity-lazyload-src');
+  this.img.removeAttribute('data-flickity-lazyload-srcset');
+};
+
+LazyLoader.prototype.onload = function( event ) {
+  this.complete( event, 'flickity-lazyloaded' );
+};
+
+LazyLoader.prototype.onerror = function( event ) {
+  this.complete( event, 'flickity-lazyerror' );
+};
+
+LazyLoader.prototype.complete = function( event, className ) {
+  // unbind events
+  this.img.removeEventListener( 'load', this );
+  this.img.removeEventListener( 'error', this );
+
+  var cell = this.flickity.getParentCell( this.img );
+  var cellElem = cell && cell.element;
+  this.flickity.cellSizeChange( cellElem );
+
+  this.img.classList.add( className );
+  this.flickity.dispatchEvent( 'lazyLoad', event, cellElem );
+};
+
+// -----  ----- //
+
+Flickity.LazyLoader = LazyLoader;
+
+return Flickity;
+
+} ) );
 
 /*!
  * Flickity v2.2.1
@@ -3847,7 +3998,7 @@ return Flickity;
  * or Flickity Commercial License for commercial use
  *
  * https://flickity.metafizzy.co
- * Copyright 2015-2019 Metafizzy
+ * Copyright 2015-2020 Metafizzy
  */
 
 ( function( window, factory ) {
@@ -3861,27 +4012,29 @@ return Flickity;
       './prev-next-button',
       './page-dots',
       './player',
-      './add-remove-cell'
+      './add-remove-cell',
+      './lazyload',
     ], factory );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      require('./flickity'),
-      require('./drag'),
-      require('./prev-next-button'),
-      require('./page-dots'),
-      require('./player'),
-      require('./add-remove-cell')
+        require('./flickity'),
+        require('./drag'),
+        require('./prev-next-button'),
+        require('./page-dots'),
+        require('./player'),
+        require('./add-remove-cell'),
+        require('./lazyload')
     );
   }
 
-})( typeof window !== 'undefined' ? window : this, function factory( Flickity ) {
-  /*jshint strict: false*/
+} )( window, function factory( Flickity ) {
+  /* jshint strict: false*/
   return Flickity;
-});
+} );
 
 /*!
- * Flickity asNavFor v2.0.1
+ * Flickity asNavFor v2.0.2
  * enable asNavFor for Flickity
  */
 
@@ -3960,13 +4113,15 @@ proto.setNavCompanion = function( elem ) {
 };
 
 proto.navCompanionSelect = function( isInstant ) {
-  if ( !this.navCompanion ) {
+  // wait for companion & selectedCells first. #8
+  var companionCells = this.navCompanion && this.navCompanion.selectedCells;
+  if ( !companionCells ) {
     return;
   }
   // select slide that matches first cell of slide
-  var selectedCell = this.navCompanion.selectedCells[0];
+  var selectedCell = companionCells[0];
   var firstIndex = this.navCompanion.cells.indexOf( selectedCell );
-  var lastIndex = firstIndex + this.navCompanion.selectedCells.length - 1;
+  var lastIndex = firstIndex + companionCells.length - 1;
   var selectIndex = Math.floor( lerp( firstIndex, lastIndex,
     this.navCompanion.cellAlign ) );
   this.selectCell( selectIndex, false, isInstant );
@@ -4026,6 +4181,448 @@ proto.destroyAsNavFor = function() {
 };
 
 // -----  ----- //
+
+return Flickity;
+
+}));
+
+/*!
+ * imagesLoaded v4.1.4
+ * JavaScript is all like "You images are done yet or what?"
+ * MIT License
+ */
+
+( function( window, factory ) { 'use strict';
+  // universal module definition
+
+  /*global define: false, module: false, require: false */
+
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'imagesloaded/imagesloaded',[
+      'ev-emitter/ev-emitter'
+    ], function( EvEmitter ) {
+      return factory( window, EvEmitter );
+    });
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('ev-emitter')
+    );
+  } else {
+    // browser global
+    window.imagesLoaded = factory(
+      window,
+      window.EvEmitter
+    );
+  }
+
+})( typeof window !== 'undefined' ? window : this,
+
+// --------------------------  factory -------------------------- //
+
+function factory( window, EvEmitter ) {
+
+
+
+var $ = window.jQuery;
+var console = window.console;
+
+// -------------------------- helpers -------------------------- //
+
+// extend objects
+function extend( a, b ) {
+  for ( var prop in b ) {
+    a[ prop ] = b[ prop ];
+  }
+  return a;
+}
+
+var arraySlice = Array.prototype.slice;
+
+// turn element or nodeList into an array
+function makeArray( obj ) {
+  if ( Array.isArray( obj ) ) {
+    // use object if already an array
+    return obj;
+  }
+
+  var isArrayLike = typeof obj == 'object' && typeof obj.length == 'number';
+  if ( isArrayLike ) {
+    // convert nodeList to array
+    return arraySlice.call( obj );
+  }
+
+  // array of single index
+  return [ obj ];
+}
+
+// -------------------------- imagesLoaded -------------------------- //
+
+/**
+ * @param {Array, Element, NodeList, String} elem
+ * @param {Object or Function} options - if function, use as callback
+ * @param {Function} onAlways - callback function
+ */
+function ImagesLoaded( elem, options, onAlways ) {
+  // coerce ImagesLoaded() without new, to be new ImagesLoaded()
+  if ( !( this instanceof ImagesLoaded ) ) {
+    return new ImagesLoaded( elem, options, onAlways );
+  }
+  // use elem as selector string
+  var queryElem = elem;
+  if ( typeof elem == 'string' ) {
+    queryElem = document.querySelectorAll( elem );
+  }
+  // bail if bad element
+  if ( !queryElem ) {
+    console.error( 'Bad element for imagesLoaded ' + ( queryElem || elem ) );
+    return;
+  }
+
+  this.elements = makeArray( queryElem );
+  this.options = extend( {}, this.options );
+  // shift arguments if no options set
+  if ( typeof options == 'function' ) {
+    onAlways = options;
+  } else {
+    extend( this.options, options );
+  }
+
+  if ( onAlways ) {
+    this.on( 'always', onAlways );
+  }
+
+  this.getImages();
+
+  if ( $ ) {
+    // add jQuery Deferred object
+    this.jqDeferred = new $.Deferred();
+  }
+
+  // HACK check async to allow time to bind listeners
+  setTimeout( this.check.bind( this ) );
+}
+
+ImagesLoaded.prototype = Object.create( EvEmitter.prototype );
+
+ImagesLoaded.prototype.options = {};
+
+ImagesLoaded.prototype.getImages = function() {
+  this.images = [];
+
+  // filter & find items if we have an item selector
+  this.elements.forEach( this.addElementImages, this );
+};
+
+/**
+ * @param {Node} element
+ */
+ImagesLoaded.prototype.addElementImages = function( elem ) {
+  // filter siblings
+  if ( elem.nodeName == 'IMG' ) {
+    this.addImage( elem );
+  }
+  // get background image on element
+  if ( this.options.background === true ) {
+    this.addElementBackgroundImages( elem );
+  }
+
+  // find children
+  // no non-element nodes, #143
+  var nodeType = elem.nodeType;
+  if ( !nodeType || !elementNodeTypes[ nodeType ] ) {
+    return;
+  }
+  var childImgs = elem.querySelectorAll('img');
+  // concat childElems to filterFound array
+  for ( var i=0; i < childImgs.length; i++ ) {
+    var img = childImgs[i];
+    this.addImage( img );
+  }
+
+  // get child background images
+  if ( typeof this.options.background == 'string' ) {
+    var children = elem.querySelectorAll( this.options.background );
+    for ( i=0; i < children.length; i++ ) {
+      var child = children[i];
+      this.addElementBackgroundImages( child );
+    }
+  }
+};
+
+var elementNodeTypes = {
+  1: true,
+  9: true,
+  11: true
+};
+
+ImagesLoaded.prototype.addElementBackgroundImages = function( elem ) {
+  var style = getComputedStyle( elem );
+  if ( !style ) {
+    // Firefox returns null if in a hidden iframe https://bugzil.la/548397
+    return;
+  }
+  // get url inside url("...")
+  var reURL = /url\((['"])?(.*?)\1\)/gi;
+  var matches = reURL.exec( style.backgroundImage );
+  while ( matches !== null ) {
+    var url = matches && matches[2];
+    if ( url ) {
+      this.addBackground( url, elem );
+    }
+    matches = reURL.exec( style.backgroundImage );
+  }
+};
+
+/**
+ * @param {Image} img
+ */
+ImagesLoaded.prototype.addImage = function( img ) {
+  var loadingImage = new LoadingImage( img );
+  this.images.push( loadingImage );
+};
+
+ImagesLoaded.prototype.addBackground = function( url, elem ) {
+  var background = new Background( url, elem );
+  this.images.push( background );
+};
+
+ImagesLoaded.prototype.check = function() {
+  var _this = this;
+  this.progressedCount = 0;
+  this.hasAnyBroken = false;
+  // complete if no images
+  if ( !this.images.length ) {
+    this.complete();
+    return;
+  }
+
+  function onProgress( image, elem, message ) {
+    // HACK - Chrome triggers event before object properties have changed. #83
+    setTimeout( function() {
+      _this.progress( image, elem, message );
+    });
+  }
+
+  this.images.forEach( function( loadingImage ) {
+    loadingImage.once( 'progress', onProgress );
+    loadingImage.check();
+  });
+};
+
+ImagesLoaded.prototype.progress = function( image, elem, message ) {
+  this.progressedCount++;
+  this.hasAnyBroken = this.hasAnyBroken || !image.isLoaded;
+  // progress event
+  this.emitEvent( 'progress', [ this, image, elem ] );
+  if ( this.jqDeferred && this.jqDeferred.notify ) {
+    this.jqDeferred.notify( this, image );
+  }
+  // check if completed
+  if ( this.progressedCount == this.images.length ) {
+    this.complete();
+  }
+
+  if ( this.options.debug && console ) {
+    console.log( 'progress: ' + message, image, elem );
+  }
+};
+
+ImagesLoaded.prototype.complete = function() {
+  var eventName = this.hasAnyBroken ? 'fail' : 'done';
+  this.isComplete = true;
+  this.emitEvent( eventName, [ this ] );
+  this.emitEvent( 'always', [ this ] );
+  if ( this.jqDeferred ) {
+    var jqMethod = this.hasAnyBroken ? 'reject' : 'resolve';
+    this.jqDeferred[ jqMethod ]( this );
+  }
+};
+
+// --------------------------  -------------------------- //
+
+function LoadingImage( img ) {
+  this.img = img;
+}
+
+LoadingImage.prototype = Object.create( EvEmitter.prototype );
+
+LoadingImage.prototype.check = function() {
+  // If complete is true and browser supports natural sizes,
+  // try to check for image status manually.
+  var isComplete = this.getIsImageComplete();
+  if ( isComplete ) {
+    // report based on naturalWidth
+    this.confirm( this.img.naturalWidth !== 0, 'naturalWidth' );
+    return;
+  }
+
+  // If none of the checks above matched, simulate loading on detached element.
+  this.proxyImage = new Image();
+  this.proxyImage.addEventListener( 'load', this );
+  this.proxyImage.addEventListener( 'error', this );
+  // bind to image as well for Firefox. #191
+  this.img.addEventListener( 'load', this );
+  this.img.addEventListener( 'error', this );
+  this.proxyImage.src = this.img.src;
+};
+
+LoadingImage.prototype.getIsImageComplete = function() {
+  // check for non-zero, non-undefined naturalWidth
+  // fixes Safari+InfiniteScroll+Masonry bug infinite-scroll#671
+  return this.img.complete && this.img.naturalWidth;
+};
+
+LoadingImage.prototype.confirm = function( isLoaded, message ) {
+  this.isLoaded = isLoaded;
+  this.emitEvent( 'progress', [ this, this.img, message ] );
+};
+
+// ----- events ----- //
+
+// trigger specified handler for event type
+LoadingImage.prototype.handleEvent = function( event ) {
+  var method = 'on' + event.type;
+  if ( this[ method ] ) {
+    this[ method ]( event );
+  }
+};
+
+LoadingImage.prototype.onload = function() {
+  this.confirm( true, 'onload' );
+  this.unbindEvents();
+};
+
+LoadingImage.prototype.onerror = function() {
+  this.confirm( false, 'onerror' );
+  this.unbindEvents();
+};
+
+LoadingImage.prototype.unbindEvents = function() {
+  this.proxyImage.removeEventListener( 'load', this );
+  this.proxyImage.removeEventListener( 'error', this );
+  this.img.removeEventListener( 'load', this );
+  this.img.removeEventListener( 'error', this );
+};
+
+// -------------------------- Background -------------------------- //
+
+function Background( url, element ) {
+  this.url = url;
+  this.element = element;
+  this.img = new Image();
+}
+
+// inherit LoadingImage prototype
+Background.prototype = Object.create( LoadingImage.prototype );
+
+Background.prototype.check = function() {
+  this.img.addEventListener( 'load', this );
+  this.img.addEventListener( 'error', this );
+  this.img.src = this.url;
+  // check if image is already complete
+  var isComplete = this.getIsImageComplete();
+  if ( isComplete ) {
+    this.confirm( this.img.naturalWidth !== 0, 'naturalWidth' );
+    this.unbindEvents();
+  }
+};
+
+Background.prototype.unbindEvents = function() {
+  this.img.removeEventListener( 'load', this );
+  this.img.removeEventListener( 'error', this );
+};
+
+Background.prototype.confirm = function( isLoaded, message ) {
+  this.isLoaded = isLoaded;
+  this.emitEvent( 'progress', [ this, this.element, message ] );
+};
+
+// -------------------------- jQuery -------------------------- //
+
+ImagesLoaded.makeJQueryPlugin = function( jQuery ) {
+  jQuery = jQuery || window.jQuery;
+  if ( !jQuery ) {
+    return;
+  }
+  // set local variable
+  $ = jQuery;
+  // $().imagesLoaded()
+  $.fn.imagesLoaded = function( options, callback ) {
+    var instance = new ImagesLoaded( this, options, callback );
+    return instance.jqDeferred.promise( $(this) );
+  };
+};
+// try making plugin
+ImagesLoaded.makeJQueryPlugin();
+
+// --------------------------  -------------------------- //
+
+return ImagesLoaded;
+
+});
+
+/*!
+ * Flickity imagesLoaded v2.0.0
+ * enables imagesLoaded option for Flickity
+ */
+
+/*jshint browser: true, strict: true, undef: true, unused: true */
+
+( function( window, factory ) {
+  // universal module definition
+  /*jshint strict: false */ /*globals define, module, require */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( [
+      'flickity/js/index',
+      'imagesloaded/imagesloaded'
+    ], function( Flickity, imagesLoaded ) {
+      return factory( window, Flickity, imagesLoaded );
+    });
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('flickity'),
+      require('imagesloaded')
+    );
+  } else {
+    // browser global
+    window.Flickity = factory(
+      window,
+      window.Flickity,
+      window.imagesLoaded
+    );
+  }
+
+}( window, function factory( window, Flickity, imagesLoaded ) {
+'use strict';
+
+Flickity.createMethods.push('_createImagesLoaded');
+
+var proto = Flickity.prototype;
+
+proto._createImagesLoaded = function() {
+  this.on( 'activate', this.imagesLoaded );
+};
+
+proto.imagesLoaded = function() {
+  if ( !this.options.imagesLoaded ) {
+    return;
+  }
+  var _this = this;
+  function onImagesLoadedProgress( instance, image ) {
+    var cell = _this.getParentCell( image.img );
+    _this.cellSizeChange( cell && cell.element );
+    if ( !_this.options.freeScroll ) {
+      _this.positionSliderAtSelected();
+    }
+  }
+  imagesLoaded( this.slider ).on( 'progress', onImagesLoadedProgress );
+};
 
 return Flickity;
 
