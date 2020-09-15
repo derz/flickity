@@ -59,7 +59,11 @@ PageDots.prototype.activate = function() {
   this.holder.addEventListener( 'click', this.handleClick );
   this.bindStartEvent( this.holder );
   // add to DOM
-  this.parent.element.appendChild( this.holder );
+  if (this.options.pageDotsContainer) {
+    this.options.pageDotsContainer.appendChild( this.holder );
+  } else {
+    this.parent.element.appendChild( this.holder );
+  }
 };
 
 PageDots.prototype.deactivate = function() {
