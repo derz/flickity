@@ -59,8 +59,8 @@ PageDots.prototype.activate = function() {
   this.holder.addEventListener( 'click', this.handleClick );
   this.bindStartEvent( this.holder );
   // add to DOM
-  if (this.options.pageDotsContainer) {
-    this.options.pageDotsContainer.appendChild( this.holder );
+  if (this.parent.options.pageDotsContainer) {
+    this.parent.options.pageDotsContainer.appendChild( this.holder );
   } else {
     this.parent.element.appendChild( this.holder );
   }
