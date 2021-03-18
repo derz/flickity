@@ -1,7 +1,6 @@
 // animate
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -91,7 +90,7 @@ proto.setTranslateX = function( x, is3d ) {
   // reverse if right-to-left and using transform
   x = this.options.rightToLeft ? -x : x;
   var translateX = this.getPositionValue( x );
-  // use 3D tranforms for hardware acceleration on iOS
+  // use 3D transforms for hardware acceleration on iOS
   // but use 2D when settled, for better font-rendering
   this.slider.style.transform = is3d ?
     'translate3d(' + translateX + ',0,0)' : 'translateX(' + translateX + ')';

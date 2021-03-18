@@ -1,12 +1,12 @@
 /*!
- * Flickity PACKAGED v2.2.1
+ * Flickity PACKAGED v2.2.2
  * Touch, responsive, flickable carousels
  *
  * Licensed GPLv3 for open source use
  * or Flickity Commercial License for commercial use
  *
  * https://flickity.metafizzy.co
- * Copyright 2015-2020 Metafizzy
+ * Copyright 2015-2021 Metafizzy
  */
 
 /**
@@ -773,7 +773,6 @@ return utils;
 // Flickity.Cell
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/cell',[
@@ -877,7 +876,6 @@ return Cell;
 // slide
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/slide',factory );
@@ -952,7 +950,6 @@ return Slide;
 // animate
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/animate',[
@@ -1042,7 +1039,7 @@ proto.setTranslateX = function( x, is3d ) {
   // reverse if right-to-left and using transform
   x = this.options.rightToLeft ? -x : x;
   var translateX = this.getPositionValue( x );
-  // use 3D tranforms for hardware acceleration on iOS
+  // use 3D transforms for hardware acceleration on iOS
   // but use 2D when settled, for better font-rendering
   this.slider.style.transform = is3d ?
     'translate3d(' + translateX + ',0,0)' : 'translateX(' + translateX + ')';
@@ -1171,7 +1168,6 @@ return proto;
 /* eslint-disable max-params */
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/flickity',[
@@ -1247,7 +1243,7 @@ function Flickity( element, options ) {
   // do not initialize twice on same element
   if ( this.element.flickityGUID ) {
     var instance = instances[ this.element.flickityGUID ];
-    instance.option( options );
+    if ( instance ) instance.option( options );
     return instance;
   }
 
@@ -2700,7 +2696,6 @@ return Unidragger;
 // drag
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/drag',[
@@ -3099,7 +3094,6 @@ return Flickity;
 // prev/next buttons
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/prev-next-button',[
@@ -3311,7 +3305,6 @@ return Flickity;
 // page dots
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/page-dots',[
@@ -3505,7 +3498,6 @@ return Flickity;
 // player & autoPlay
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/player',[
@@ -3697,7 +3689,6 @@ return Flickity;
 // add, remove cell
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/add-remove-cell',[
@@ -3860,7 +3851,6 @@ return Flickity;
 // lazyload
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/lazyload',[
@@ -3995,19 +3985,18 @@ return Flickity;
 } ) );
 
 /*!
- * Flickity v2.2.1
+ * Flickity v2.2.2
  * Touch, responsive, flickable carousels
  *
  * Licensed GPLv3 for open source use
  * or Flickity Commercial License for commercial use
  *
  * https://flickity.metafizzy.co
- * Copyright 2015-2020 Metafizzy
+ * Copyright 2015-2021 Metafizzy
  */
 
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( 'flickity/js/index',[
@@ -4033,7 +4022,6 @@ return Flickity;
   }
 
 } )( window, function factory( Flickity ) {
-  /* jshint strict: false*/
   return Flickity;
 } );
 

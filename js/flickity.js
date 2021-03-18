@@ -2,7 +2,6 @@
 /* eslint-disable max-params */
 ( function( window, factory ) {
   // universal module definition
-  /* jshint strict: false */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -78,7 +77,7 @@ function Flickity( element, options ) {
   // do not initialize twice on same element
   if ( this.element.flickityGUID ) {
     var instance = instances[ this.element.flickityGUID ];
-    instance.option( options );
+    if ( instance ) instance.option( options );
     return instance;
   }
 
